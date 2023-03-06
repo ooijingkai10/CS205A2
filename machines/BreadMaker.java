@@ -1,59 +1,54 @@
 package machines;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import ingredients.Bread;
 import pools.BreadPool;
 
-public class BreadMaker implements Runnable{
+public class BreadMaker implements Runnable {
 
-    Task task;
     private int id;
     private int tasksDone = 0;
     private int bread_rate;
     BreadPool breadPool;
+    private volatile static int totalcount = 0;
+    private volatile static int tomake;
+    static Lock lock = new ReentrantLock(true);
 
-    public BreadMaker(Task task, int id, int bread_rate, BreadPool breadPool) {
-        this.task = task;
+
+    public BreadMaker(int id, int bread_rate, BreadPool breadPool) {
         this.id = id;
         this.bread_rate = bread_rate;
         this.breadPool = breadPool;
     }
 
-    public static void gowork(int n) {
+    static void gowork(int n) {
         for (int i = 0; i < n; i++) {
             long m = 300000000;
-            while (m>0) {
-                m--;
-            }
+            while (m-- > 0)
+                ;
         }
     }
 
     @Override
     public void run() {
-        // TODO Auto-generated method stub
-        while(task.doBreadTask()) {
-            // try {
-            //     Thread.sleep(bread_rate * 1000);
-            // } catch (InterruptedException e) {
-            //     e.printStackTrace();
-            // }
+        while (totalcount < tomake) {
+            totalcount++;
+
+            // Critical section
+            lock.lock();
             gowork(bread_rate);
             Bread bread = new Bread(tasksDone, this.toString());
-            breadPool.putBread(bread);
+            breadPool.putBread(bread, this);
             tasksDone++;
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {
-                //TODO: handle exception
-            }
-            logger.Printext.log(String.format("%s puts %s",this, bread));
-            // task.finishBreadTask();
+            lock.unlock();
         }
-        
+
     }
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
         return "B" + id;
     }
 
@@ -61,8 +56,15 @@ public class BreadMaker implements Runnable{
         return tasksDone;
     }
 
+    public static int getTomake() {
+        return tomake;
+    }
 
+    public static void setTomake(int tomake) {
+        BreadMaker.tomake = tomake;
+    }
+
+   
 
     
-
 }

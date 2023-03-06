@@ -1,18 +1,14 @@
 import java.util.List;
+
 import java.util.ArrayList;
 import logger.*;
 import machines.*;
 import pools.*;
 
-/* 
-
-*/
-
 public class SandwichManager {
 
-    public BreadPool breadPool;
-    public EggPool eggPool;
-    public Task task;
+    public volatile BreadPool breadPool;
+    public volatile EggPool eggPool;
 
     List<BreadMaker> breadMakers = new ArrayList<>();
     List<EggMaker> eggMakers = new ArrayList<>();
@@ -34,20 +30,21 @@ public class SandwichManager {
 
         breadPool = new BreadPool(bread_capacity);
         eggPool = new EggPool(egg_capacity);
-        task = new Task(sandwiches, sandwiches * 2, sandwiches);
-
+        BreadMaker.setTomake(sandwiches * 2);
+        EggMaker.setTomake(sandwiches);
+        SandwichPacker.setTomake(sandwiches);
         for (int i = 0; i < bread_makers; i++) {
-            BreadMaker breadMaker = new BreadMaker(task, i, bread_rate, this.breadPool);
+            BreadMaker breadMaker = new BreadMaker(i, bread_rate, this.breadPool);
             breadMakers.add(breadMaker);
         }
 
         for (int i = 0; i < egg_makers; i++) {
-            EggMaker eggMaker = new EggMaker(task, i, egg_rate, this.eggPool);
+            EggMaker eggMaker = new EggMaker(i, egg_rate, this.eggPool);
             eggMakers.add(eggMaker);
         }
 
         for (int i = 0; i < sandwich_packers; i++) {
-            SandwichPacker sandwichPacker = new SandwichPacker(task, i, packing_rate, this.breadPool, this.eggPool);
+            SandwichPacker sandwichPacker = new SandwichPacker(i, packing_rate, this.breadPool, this.eggPool);
             sandwichPackers.add(sandwichPacker);
         }
 
