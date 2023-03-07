@@ -17,7 +17,6 @@ public class SandwichPacker implements Runnable {
     static Lock lock = new ReentrantLock(true);
 
     public SandwichPacker(int id, int packing_rate, BreadPool breadPool, EggPool eggPool) {
-        // this.task = task;
         this.id = id;
         this.packing_rate = packing_rate;
         this.breadPool = breadPool;
