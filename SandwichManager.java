@@ -14,6 +14,18 @@ public class SandwichManager {
     List<EggMaker> eggMakers = new ArrayList<>();
     List<SandwichPacker> sandwichPackers = new ArrayList<>();
 
+    /**
+     * SandwichManager Constructor
+     * @param sandwiches
+     * @param bread_capacity
+     * @param egg_capacity
+     * @param bread_makers
+     * @param egg_makers
+     * @param sandwich_packers
+     * @param bread_rate
+     * @param egg_rate
+     * @param packing_rate
+     */
     public SandwichManager(int sandwiches, int bread_capacity, int egg_capacity, int bread_makers, int egg_makers,
             int sandwich_packers, int bread_rate, int egg_rate, int packing_rate) {
 
@@ -28,11 +40,22 @@ public class SandwichManager {
         logger.Printext.log("packing rate: " + packing_rate);
         logger.Printext.log("");
 
+        /**
+         * Init Pools
+         */
         breadPool = new BreadPool(bread_capacity);
         eggPool = new EggPool(egg_capacity);
+
+        /**
+         * Set amount to make for total makers
+         */
         BreadMaker.setTomake(sandwiches * 2);
         EggMaker.setTomake(sandwiches);
         SandwichPacker.setTomake(sandwiches);
+
+        /**
+         * Initialize makers and add to respective lists
+         */
         for (int i = 0; i < bread_makers; i++) {
             BreadMaker breadMaker = new BreadMaker(i, bread_rate, this.breadPool);
             breadMakers.add(breadMaker);
@@ -52,6 +75,9 @@ public class SandwichManager {
 
     public static void main(String[] args) {
 
+        /**
+         * Error checking for correct input
+         */
         if (args.length < 9) {
             System.out.println("Please enter the right arguements");
             return;
@@ -72,7 +98,9 @@ public class SandwichManager {
 
         List<Thread> threads = new ArrayList<>();
 
-        // start threads
+        /**
+         * Start threads
+         */
         for (BreadMaker breadMaker : sandwichManager.breadMakers) {
             Thread thread = new Thread(breadMaker);
             threads.add(thread);
@@ -91,15 +119,20 @@ public class SandwichManager {
             thread.start();
         }
 
+        /**
+         * Join threads
+         */
         for (Thread thread : threads) {
             try {
                 thread.join();
             } catch (InterruptedException e) {
-                // TODO: handle exception
                 e.printStackTrace();
             }
         }
 
+        /**
+         * Print Summary at the end
+         */
         logger.Printext.log("");
         logger.Printext.log("Summary:");
         for (BreadMaker breadMaker : sandwichManager.breadMakers) {

@@ -1,0 +1,1 @@
+javac SandwichManager.java && java SandwichManager 10 4 4 3 3 3 3 5 4

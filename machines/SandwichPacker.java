@@ -16,6 +16,13 @@ public class SandwichPacker implements Runnable {
     private volatile static int tomake;
     static Lock lock = new ReentrantLock(true);
 
+    /**
+     * Constructor for the sandwichPacker
+     * @param id
+     * @param packing_rate
+     * @param breadPool
+     * @param eggPool
+     */
     public SandwichPacker(int id, int packing_rate, BreadPool breadPool, EggPool eggPool) {
         this.id = id;
         this.packing_rate = packing_rate;

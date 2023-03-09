@@ -6,7 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import ingredients.Egg;
 import pools.EggPool;
 
-public class EggMaker implements Runnable{
+public class EggMaker implements Runnable {
     private int id;
     private int tasksDone = 0;
     private int egg_rate;
@@ -15,12 +15,19 @@ public class EggMaker implements Runnable{
     private volatile static int tomake;
     static Lock lock = new ReentrantLock(true);
 
-
+    /**
+     * Constructor for EggMaker
+     * 
+     * @param id
+     * @param egg_rate
+     * @param eggPool
+     */
     public EggMaker(int id, int egg_rate, EggPool eggPool) {
         this.id = id;
         this.egg_rate = egg_rate;
         this.eggPool = eggPool;
     }
+
     static void gowork(int n) {
         for (int i = 0; i < n; i++) {
             long m = 300000000;
@@ -29,14 +36,12 @@ public class EggMaker implements Runnable{
         }
     }
 
-
     @Override
     public void run() {
-        // TODO Auto-generated method stub
-        while(totalcount < tomake) {
+        while (totalcount < tomake) {
             totalcount++;
 
-            //Critical section
+            // Critical section
             lock.lock();
             gowork(egg_rate);
             Egg egg = new Egg(tasksDone, this.toString());
@@ -45,12 +50,11 @@ public class EggMaker implements Runnable{
             lock.unlock();
             // task.finishBreadTask();
         }
-        
+
     }
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
         return "E" + id;
     }
 

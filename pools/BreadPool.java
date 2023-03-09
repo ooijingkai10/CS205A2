@@ -9,11 +9,21 @@ public class BreadPool {
     private volatile int end = 0;
     private volatile int item_count = 0;
 
-
+    /**
+     * Constructor for breadPool which takes in an int as the size of the breadPool
+     * 
+     * @param size
+     */
     public BreadPool(int size) {
         this.pool = new Bread[size];
     }
 
+    /**
+     * synchronized function to putBread into the pool by the breadMaker.
+     * 
+     * @param bread
+     * @param breadMaker
+     */
     public synchronized void putBread(Bread bread, BreadMaker breadMaker) {
         while (item_count == pool.length) {
             try {
@@ -30,12 +40,17 @@ public class BreadPool {
         this.notify();
     }
 
+    /**
+     * Synchronized function for the SandwichMaker to getBread from the bread pool
+     * 
+     * @return
+     */
     public synchronized Bread getBread() {
         while (item_count == 0) {
             try {
                 this.wait();
             } catch (Exception e) {
-                //TODO: handle exception
+                // TODO: handle exception
 
             }
         }
